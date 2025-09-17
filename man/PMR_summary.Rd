@@ -2,66 +2,83 @@
 % Please edit documentation in R/RcppExports.R
 \name{PMR_summary}
 \alias{PMR_summary}
-\title{PMR model with summary data}
+\title{PPMR Summary-level Analysis}
 \usage{
-PMR_summary(betaxin, betayin, Sigma1sin, Sigma2sin, samplen1, samplen2,
-  gammain, alphain, max_iterin, epsin)
+PMR_summary(
+  betaxin,
+  betayin,
+  Sigma1sin,
+  Sigma2sin,
+  samplen1,
+  samplen2,
+  gammain,
+  alphain,
+  max_iterin,
+  epsin
+)
 }
 \arguments{
-\item{betaxin}{the cis-SNP effect size vector for one specific gene in eQTL 
-data, which must be calculated based on both the standardized gene expression 
-value and the standardized cis-genotype matrix.}
+\item{betaxin}{Numeric vector of estimated SNP–exposure effects (length `p`).}
 
-\item{betayin}{the cis-SNP effect size vector for one specific gene in GWAS 
-data, which be calculated based on both the standardized complex trait value 
-and the standardized cis-genotype matrix.}
+\item{betayin}{Numeric vector of estimated SNP–outcome effects (length `p`).}
 
-\item{Sigma1sin}{the LD matrix in eQTL data.}
+\item{Sigma1sin}{Numeric `p x p` covariance matrix for the exposure SNP
+associations (typically an LD matrix).}
 
-\item{Sigma2sin}{the LD matrix in GWAS data. Both \code{Sigma2sin} and 
-\code{sigma1sin} are often the same from the reference panel.}
+\item{Sigma2sin}{Numeric `p x p` covariance matrix for the outcome SNP
+associations.}
 
-\item{samplen1}{the sample size of eQTL data.}
+\item{samplen1}{Integer. Sample size used to estimate \code{betaxin}.}
 
-\item{samplen2}{the sample size of GWAS data.}
+\item{samplen2}{Integer. Sample size used to estimate \code{betayin}.}
 
-\item{gammain}{indicator variable for constrained model, with 1 for the null 
-model that there is no horizontal pleiotropy.}
+\item{gammain}{Integer flag (0/1). If 1, constrains the gamma parameter to 0.}
 
-\item{alphain}{indicator variable for constrained model, with 1 for the null 
-model that there is no causal effect.}
+\item{alphain}{Integer flag (0/1). If 1, constrains the alpha parameter to 0.}
 
-\item{max_iterin}{The maximum iteration.}
+\item{max_iterin}{Integer. Maximum number of EM iterations (default: 50 or more).}
 
-\item{epsin}{The convergence tolerance of the absolute value of the difference 
-between the nth and (n+1)th log likelihood.}
+\item{epsin}{Numeric. Convergence tolerance for the log-likelihood.}
 }
 \value{
-A list of estimates of model parameters, including the causal effect 
-\code{alpha}, the horizontal pleiotropy effect \code{gamma}, and the two corresponding p values.
+A named list with elements:
+\item{alpha}{Estimated causal effect of the mediator on the outcome.}
+\item{gamma}{Estimated direct effect of the SNPs on the outcome.}
+\item{sigmaX}{Residual variance for the exposure model.}
+\item{sigmaY}{Residual variance for the outcome model.}
+\item{sigmabeta}{Variance of the genetic effects.}
+\item{loglik_seq}{Vector of log-likelihood values across iterations.}
+\item{loglik}{Final log-likelihood value.}
+\item{iteration}{Number of iterations used before convergence.}
 }
 \description{
-Fit the probabilistic MR model with summary data while accounting for the 
-correlated instruments and horizontal pleiotropy in TWAS framework.
+PPMR Summary-level Analysis
 }
 \examples{
-data(Examplesummary)
-attach(Examplesummary)
-fmH1=PMR_summary(betaxin=betax,betayin=betay,Sigma1sin=Sigma1,Sigma2sin=Sigma2,
-      samplen1=n1,samplen2=n2,gammain=0,alphain=0,max_iterin =1000, epsin=1e-5)
-fmH0alpha=PMR_summary(betaxin=betax,betayin=betay,Sigma1sin=Sigma1,Sigma2sin=Sigma2,
-           samplen1=n1,samplen2=n2,gammain=0,alphain=1,max_iterin =1000, epsin=1e-5)
-fmH0gamma=PMR_summary(betaxin=betax,betayin=betay,Sigma1sin=Sigma1,Sigma2sin=Sigma2,
-           samplen1=n1,samplen2=n2,gammain=1,alphain=0,max_iterin =1000, epsin=1e-5)
-loglikH1=max(fmH1$loglik,na.rm=TRUE)
-loglikH0alpha=max(fmH0alpha$loglik,na.rm=TRUE)
-loglikH0gamma=max(fmH0gamma$loglik,na.rm=TRUE)
-stat_alpha = 2 * (loglikH1 - loglikH0alpha)
-pvalue_alpha = pchisq(stat_alpha,1,lower.tail=FALSE)
-stat_gamma = 2 * (loglikH1 - loglikH0gamma)
-pvalue_gamma = pchisq(stat_gamma,1,lower.tail=FALSE)
+# ---- Simulate simple example data ----
+set.seed(123)
+p  <- 3
+n1 <- 10
+n2 <- 12
+betax <- c(0.2, -0.1, 0.3)
+betay <- c(0.1,  0.0, 0.2)
+Sigma1 <- matrix(c(0.6, 0.2, 0.1,
+                   0.2, 0.5, 0.1,
+                   0.1, 0.1, 0.4), 3, 3)
+Sigma2 <- matrix(c(0.5, 0.1, 0.0,
+                   0.1, 0.6, 0.1,
+                   0.0, 0.1, 0.5), 3, 3)
 
-}
-\author{
-Zhongshang Yuan, Xiang Zhou.
+PMR_summary(
+  betaxin   = betax,
+  betayin   = betay,
+  Sigma1sin = Sigma1,
+  Sigma2sin = Sigma2,
+  samplen1  = n1,
+  samplen2  = n2,
+  gammain   = 0,
+  alphain   = 0,
+  max_iterin = 50,
+  epsin      = 1e-6
+)
 }

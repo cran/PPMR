@@ -132,13 +132,82 @@ void loglike_twas(const arma::mat& R, const arma::vec& res_y, const arma::vec& r
 //*******************************************************************//
 //                MAIN FUNC                        //
 //*******************************************************************//
-//' PPMR
-//' @param yin input data
-//' @param zin input data
-//' @param x1in matrix
-//' @param x2in matrix
-//' 
-//' @return list: weight of two RNA-seq data, U: estimated U
+//' @title PPMR Individual-level Analysis
+//' @name PMR_individual
+// //'
+// //' Implements the PPMR (Probabilistic Polygenic Mediation Regression) algorithm
+// //' for *individual-level* data using an EM-like procedure.  This function
+// //' estimates the parameters alpha, gamma, residual variances, and the variance
+// //' of the genetic effects from raw genotype and phenotype data.
+//'
+//' @param yin Numeric vector of the outcome variable (length \eqn{n1}).
+//' @param zin Numeric vector of the mediator variable (length \eqn{n2}).
+//' @param x1in Numeric \eqn{n1 \times p} matrix of SNP genotypes for the
+//'   outcome model.
+//' @param x2in Numeric \eqn{n2 \times p} matrix of SNP genotypes for the
+//'   mediator model.  Must have the same number of columns \eqn{p} as \code{x1in}.
+//' @param gammain Integer flag (0/1). If 1, constrains the gamma parameter to 0.
+//' @param alphain Integer flag (0/1). If 1, constrains the alpha parameter to 0.
+//' @param max_iterin Integer. Maximum number of EM iterations (default: 50 or more).
+//' @param epsin Numeric. Convergence tolerance for the log-likelihood.
+//'
+//' @return A named list with elements:
+//' \item{alpha}{Estimated causal effect of the mediator on the outcome.}
+//' \item{gamma}{Estimated direct effect of the SNPs on the outcome.}
+//' \item{sigmaX}{Residual variance of the outcome model.}
+//' \item{sigmaY}{Residual variance of the mediator model.}
+//' \item{sigmabeta}{Variance of the genetic effects.}
+//' \item{loglik_seq}{Vector of log-likelihood values across iterations.}
+//' \item{loglik}{Final log-likelihood value.}
+//' \item{iteration}{Number of iterations before convergence.}
+//'
+//' @examples
+//' # ---- Simulate simple example data ----
+//' set.seed(456)
+//' n1 <- 8
+//' n2 <- 10
+//' p  <- 3
+//'
+//' # Outcome and mediator vectors
+//' y <- c(0.5, -0.3, 0.1, 0.4, -0.2, 0.0, 0.6, -0.1)
+//' z <- c(0.2, -0.4, 0.3, 0.1, -0.1, 0.5, 0.0, 0.4, -0.3, 0.2)
+//'
+//' # Fixed genotype design matrices (n × p) with mild correlations
+//' x1 <- matrix(c(
+//'   1.0, 0.2, 0.1,
+//'   0.2, 1.0, 0.3,
+//'   0.1, 0.3, 1.0,
+//'   0.4, 0.1, 0.2,
+//'   0.2, 0.4, 0.3,
+//'   0.3, 0.2, 0.4,
+//'   0.5, 0.1, 0.3,
+//'   0.1, 0.5, 0.2
+//' ), nrow = n1, byrow = TRUE)
+//'
+//' x2 <- matrix(c(
+//'   1.0, 0.3, 0.2,
+//'   0.3, 1.0, 0.4,
+//'   0.2, 0.4, 1.0,
+//'   0.5, 0.1, 0.3,
+//'   0.2, 0.5, 0.1,
+//'   0.3, 0.2, 0.4,
+//'   0.4, 0.3, 0.2,
+//'   0.1, 0.4, 0.3,
+//'   0.2, 0.1, 0.5,
+//'   0.3, 0.2, 0.4
+//' ), nrow = n2, byrow = TRUE)
+//'
+//' # Run PPMR individual-level analysis
+//' PMR_individual(
+//'   yin        = y,
+//'   zin        = z,
+//'   x1in       = x1,
+//'   x2in       = x2,
+//'   gammain    = 0,
+//'   alphain    = 0,
+//'   max_iterin = 50,
+//'   epsin      = 1e-6
+//' )
 //' 
 //' @export
 // [[Rcpp::export]]

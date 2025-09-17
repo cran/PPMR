@@ -6,24 +6,11 @@
 
 using namespace Rcpp;
 
-// PMR_individual
-SEXP PMR_individual(SEXP yin, SEXP zin, SEXP x1in, SEXP x2in, SEXP gammain, SEXP alphain, SEXP max_iterin, SEXP epsin);
-RcppExport SEXP _PPMR_PMR_individual(SEXP yinSEXP, SEXP zinSEXP, SEXP x1inSEXP, SEXP x2inSEXP, SEXP gammainSEXP, SEXP alphainSEXP, SEXP max_iterinSEXP, SEXP epsinSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type yin(yinSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type zin(zinSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type x1in(x1inSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type x2in(x2inSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type gammain(gammainSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type alphain(alphainSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type max_iterin(max_iterinSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type epsin(epsinSEXP);
-    rcpp_result_gen = Rcpp::wrap(PMR_individual(yin, zin, x1in, x2in, gammain, alphain, max_iterin, epsin));
-    return rcpp_result_gen;
-END_RCPP
-}
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // PMR_summary
 SEXP PMR_summary(SEXP betaxin, SEXP betayin, SEXP Sigma1sin, SEXP Sigma2sin, SEXP samplen1, SEXP samplen2, SEXP gammain, SEXP alphain, SEXP max_iterin, SEXP epsin);
 RcppExport SEXP _PPMR_PMR_summary(SEXP betaxinSEXP, SEXP betayinSEXP, SEXP Sigma1sinSEXP, SEXP Sigma2sinSEXP, SEXP samplen1SEXP, SEXP samplen2SEXP, SEXP gammainSEXP, SEXP alphainSEXP, SEXP max_iterinSEXP, SEXP epsinSEXP) {
@@ -44,10 +31,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// PMR_individual
+SEXP PMR_individual(SEXP yin, SEXP zin, SEXP x1in, SEXP x2in, SEXP gammain, SEXP alphain, SEXP max_iterin, SEXP epsin);
+RcppExport SEXP _PPMR_PMR_individual(SEXP yinSEXP, SEXP zinSEXP, SEXP x1inSEXP, SEXP x2inSEXP, SEXP gammainSEXP, SEXP alphainSEXP, SEXP max_iterinSEXP, SEXP epsinSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type yin(yinSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type zin(zinSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type x1in(x1inSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type x2in(x2inSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gammain(gammainSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type alphain(alphainSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type max_iterin(max_iterinSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type epsin(epsinSEXP);
+    rcpp_result_gen = Rcpp::wrap(PMR_individual(yin, zin, x1in, x2in, gammain, alphain, max_iterin, epsin));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PPMR_PMR_individual", (DL_FUNC) &_PPMR_PMR_individual, 8},
     {"_PPMR_PMR_summary", (DL_FUNC) &_PPMR_PMR_summary, 10},
+    {"_PPMR_PMR_individual", (DL_FUNC) &_PPMR_PMR_individual, 8},
     {NULL, NULL, 0}
 };
 

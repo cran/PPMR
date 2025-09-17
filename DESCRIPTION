@@ -1,7 +1,7 @@
 Package: PPMR
 Title: Probabilistic Two Sample Mendelian Randomization
 Type: Package
-Version: 1.0
+Version: 1.0.1
 Authors@R: c(
     person(given = "Zhongshang", family = "Yuan", role = c("aut")),
     person(given = "Xiang", family = "Zhou", role = c("aut"), email = "xzhousph@umich.edu"),
@@ -17,14 +17,14 @@ Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 1.0.0)
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1.9000
+RoxygenNote: 7.3.2
 NeedsCompilation: yes
 BugReports: https://github.com/umich-biostatistics/PPMR/issues
-Packaged: 2019-08-08 13:46:00 UTC; mkleinsa
+Packaged: 2025-09-17 19:02:37 UTC; mk
 Author: Zhongshang Yuan [aut],
   Xiang Zhou [aut],
   Michael Kleinsasser [cre]
 Maintainer: Michael Kleinsasser <mkleinsa@umich.edu>
 Depends: R (>= 3.5.0)
 Repository: CRAN
-Date/Publication: 2019-08-09 10:20:07 UTC
+Date/Publication: 2025-09-17 19:20:09 UTC

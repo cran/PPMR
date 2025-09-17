@@ -4,7 +4,8 @@
 \name{Examplesummary}
 \alias{Examplesummary}
 \title{Summary level dataset}
-\format{A list contains the following objects:
+\format{
+A list contains the following objects:
 \describe{
   \item{betax}{the cis-SNP effect size vector for one specific gene in eQTL data.}
   \item{betay}{the cis-SNP effect size vector for one specific gene in GWAS data.}
@@ -12,7 +13,8 @@
   \item{Sigma2}{the LD matrix in GWAS data.}
   \item{n1}{the sample size of eQTL data.}
   \item{n2}{the sample size of GWAS data.}
-}}
+}
+}
 \usage{
 Examplesummary
 }

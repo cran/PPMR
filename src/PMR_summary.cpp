@@ -135,14 +135,64 @@ void loglike_twas_summary(const arma::mat& R, const arma::mat& Sigma1, const arm
 //*******************************************************************//
 //                MAIN FUNC                        //
 //*******************************************************************//
-//' PPMR
-//' @param betaxin input data
-//' @param betayin input data
-//' @param Sigma1in matrix
-//' @param Sigma2in matrix
-//' 
-//' @return list: weight of two RNA-seq data, U: estimated U
-//' 
+//' @title PPMR Summary-level Analysis
+//' @name PMR_summary
+//'
+// // ' Implements the PPMR (Probabilistic Polygenic Mediation Regression) algorithm
+// // ' for *summary-level* data using an EM-like procedure.  This function estimates
+// // ' the parameters alpha, gamma, residual variances, and the variance of the
+// // ' genetic effects given summary statistics and covariance matrices.
+//'
+//' @param betaxin Numeric vector of estimated SNP–exposure effects (length `p`).
+//' @param betayin Numeric vector of estimated SNP–outcome effects (length `p`).
+//' @param Sigma1sin Numeric `p x p` covariance matrix for the exposure SNP
+//'   associations (typically an LD matrix).
+//' @param Sigma2sin Numeric `p x p` covariance matrix for the outcome SNP
+//'   associations.
+//' @param samplen1 Integer. Sample size used to estimate \code{betaxin}.
+//' @param samplen2 Integer. Sample size used to estimate \code{betayin}.
+//' @param gammain Integer flag (0/1). If 1, constrains the gamma parameter to 0.
+//' @param alphain Integer flag (0/1). If 1, constrains the alpha parameter to 0.
+//' @param max_iterin Integer. Maximum number of EM iterations (default: 50 or more).
+//' @param epsin Numeric. Convergence tolerance for the log-likelihood.
+//'
+//' @return A named list with elements:
+//' \item{alpha}{Estimated causal effect of the mediator on the outcome.}
+//' \item{gamma}{Estimated direct effect of the SNPs on the outcome.}
+//' \item{sigmaX}{Residual variance for the exposure model.}
+//' \item{sigmaY}{Residual variance for the outcome model.}
+//' \item{sigmabeta}{Variance of the genetic effects.}
+//' \item{loglik_seq}{Vector of log-likelihood values across iterations.}
+//' \item{loglik}{Final log-likelihood value.}
+//' \item{iteration}{Number of iterations used before convergence.}
+//'
+//' @examples
+//' # ---- Simulate simple example data ----
+//' set.seed(123)
+//' p  <- 3
+//' n1 <- 10
+//' n2 <- 12
+//' betax <- c(0.2, -0.1, 0.3)
+//' betay <- c(0.1,  0.0, 0.2)
+//' Sigma1 <- matrix(c(0.6, 0.2, 0.1,
+//'                    0.2, 0.5, 0.1,
+//'                    0.1, 0.1, 0.4), 3, 3)
+//' Sigma2 <- matrix(c(0.5, 0.1, 0.0,
+//'                    0.1, 0.6, 0.1,
+//'                    0.0, 0.1, 0.5), 3, 3)
+//'
+//' PMR_summary(
+//'   betaxin   = betax,
+//'   betayin   = betay,
+//'   Sigma1sin = Sigma1,
+//'   Sigma2sin = Sigma2,
+//'   samplen1  = n1,
+//'   samplen2  = n2,
+//'   gammain   = 0,
+//'   alphain   = 0,
+//'   max_iterin = 50,
+//'   epsin      = 1e-6
+//' )
 //' @export
 // [[Rcpp::export]]
 

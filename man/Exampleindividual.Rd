@@ -4,13 +4,15 @@
 \name{Exampleindividual}
 \alias{Exampleindividual}
 \title{Individual level dataset}
-\format{A list contains the following objects:
+\format{
+A list contains the following objects:
 \describe{
   \item{zx}{the standardized genotype matrix for 465 individuals and 50 cis-SNPs in eQTL data.}
   \item{zy}{the standardized genotype matrix for 2000 individuals and 50 cis-SNPs in GWAS data.}
   \item{x}{the standarized gene expression vector for 465 individuals in eQL data.}
   \item{y}{the standarized complex trait vector for 2000 individuals in GWAS data.}
-}}
+}
+}
 \usage{
 Exampleindividual
 }

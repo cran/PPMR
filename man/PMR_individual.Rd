@@ -2,59 +2,89 @@
 % Please edit documentation in R/RcppExports.R
 \name{PMR_individual}
 \alias{PMR_individual}
-\title{PMR model with individual level data}
+\title{PPMR Individual-level Analysis}
 \usage{
 PMR_individual(yin, zin, x1in, x2in, gammain, alphain, max_iterin, epsin)
 }
 \arguments{
-\item{yin}{standardized exposure vector (e.g. gene expression in TWAS).}
+\item{yin}{Numeric vector of the outcome variable (length \eqn{n1}).}
 
-\item{zin}{standardized complex trait vector.}
+\item{zin}{Numeric vector of the mediator variable (length \eqn{n2}).}
 
-\item{x1in}{standardized cis-genotype matrix in eQTL data.}
+\item{x1in}{Numeric \eqn{n1 \times p} matrix of SNP genotypes for the
+outcome model.}
 
-\item{x2in}{standardized cis-genotype matrix in GWAS data.}
+\item{x2in}{Numeric \eqn{n2 \times p} matrix of SNP genotypes for the
+mediator model.  Must have the same number of columns \eqn{p} as \code{x1in}.}
 
-\item{gammain}{indicator variable for constrained PMR model, with 1 for the null 
-model that there is no horizontal pleiotropy.}
+\item{gammain}{Integer flag (0/1). If 1, constrains the gamma parameter to 0.}
 
-\item{alphain}{indicator variable for constrained PMR model, with 1 for the null 
-model that there is no causal effect.}
+\item{alphain}{Integer flag (0/1). If 1, constrains the alpha parameter to 0.}
 
-\item{max_iterin}{The maximum iteration.}
+\item{max_iterin}{Integer. Maximum number of EM iterations (default: 50 or more).}
 
-\item{epsin}{The convergence tolerance of the absolute value of the difference 
-between the nth and (n+1)th log likelihood.}
+\item{epsin}{Numeric. Convergence tolerance for the log-likelihood.}
 }
 \value{
-a list of estimates of model parameters, including the causal effect 
-\code{alpha}, the horizontal pleiotropy effect \code{gamma}, and the two 
-corresponding p values
+A named list with elements:
+\item{alpha}{Estimated causal effect of the mediator on the outcome.}
+\item{gamma}{Estimated direct effect of the SNPs on the outcome.}
+\item{sigmaX}{Residual variance of the outcome model.}
+\item{sigmaY}{Residual variance of the mediator model.}
+\item{sigmabeta}{Variance of the genetic effects.}
+\item{loglik_seq}{Vector of log-likelihood values across iterations.}
+\item{loglik}{Final log-likelihood value.}
+\item{iteration}{Number of iterations before convergence.}
 }
 \description{
-Fit the probabilistic MR model with individual level data while accounting for 
-the correlated instruments and horizontal pleiotropy in TWAS framework.
+PPMR Individual-level Analysis
 }
 \examples{
-data(Exampleindividual)
-attach(Exampleindividual)
-fmH1 = PMR_individual(yin=x, zin=y, x1in=zx, x2in=zy,
-                      gammain=0,alphain = 0,max_iterin =1000,epsin=1e-5)
-alpha<-fmH1$alpha
-gamma<-fmH1$gamma
-fmH0gamma = PMR_individual(yin=x,zin= y, x1in=zx, x2in=zy,gammain=1, 
-                           alphain = 0,max_iterin =1000,epsin=1e-5)
-fmH0alpha = PMR_individual(yin=x, zin=y, x1in=zx, x2in=zy,gammain=0,
-                           alphain = 1,max_iterin =1000, epsin=1e-5)
-loglikH1=max(fmH1$loglik,na.rm=TRUE)
-loglikH0gamma=max(fmH0gamma$loglik,na.rm=TRUE)
-loglikH0alpha=max(fmH0alpha$loglik,na.rm=TRUE)
-stat_alpha = 2 * (loglikH1 - loglikH0alpha)
-pvalue_alpha = pchisq(stat_alpha,1,lower.tail=FALSE)
-stat_gamma = 2 * (loglikH1 - loglikH0gamma)
-pvalue_gamma = pchisq(stat_gamma,1,lower.tail=FALSE)
+# ---- Simulate simple example data ----
+set.seed(456)
+n1 <- 8
+n2 <- 10
+p  <- 3
 
-}
-\author{
-Zhongshang Yuan, Xiang Zhou.
+# Outcome and mediator vectors
+y <- c(0.5, -0.3, 0.1, 0.4, -0.2, 0.0, 0.6, -0.1)
+z <- c(0.2, -0.4, 0.3, 0.1, -0.1, 0.5, 0.0, 0.4, -0.3, 0.2)
+
+# Fixed genotype design matrices (n × p) with mild correlations
+x1 <- matrix(c(
+  1.0, 0.2, 0.1,
+  0.2, 1.0, 0.3,
+  0.1, 0.3, 1.0,
+  0.4, 0.1, 0.2,
+  0.2, 0.4, 0.3,
+  0.3, 0.2, 0.4,
+  0.5, 0.1, 0.3,
+  0.1, 0.5, 0.2
+), nrow = n1, byrow = TRUE)
+
+x2 <- matrix(c(
+  1.0, 0.3, 0.2,
+  0.3, 1.0, 0.4,
+  0.2, 0.4, 1.0,
+  0.5, 0.1, 0.3,
+  0.2, 0.5, 0.1,
+  0.3, 0.2, 0.4,
+  0.4, 0.3, 0.2,
+  0.1, 0.4, 0.3,
+  0.2, 0.1, 0.5,
+  0.3, 0.2, 0.4
+), nrow = n2, byrow = TRUE)
+
+# Run PPMR individual-level analysis
+PMR_individual(
+  yin        = y,
+  zin        = z,
+  x1in       = x1,
+  x2in       = x2,
+  gammain    = 0,
+  alphain    = 0,
+  max_iterin = 50,
+  epsin      = 1e-6
+)
+
 }
